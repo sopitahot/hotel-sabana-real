@@ -1,0 +1,128 @@
+@startuml
+
+skinparam classBackgroundColor #1e1e2e
+skinparam classBorderColor #89b4fa
+skinparam classArrowColor #cba6f7
+skinparam classFontColor #cdd6f4
+skinparam classAttributeFontColor #a6e3a1
+skinparam backgroundColor #181825
+
+abstract class Empleado {
+  - nombre: String
+  - id: String
+  - cargo: String
+  + Empleado(nombre, id, cargo)
+  + getNombre(): String
+  + getId(): String
+  + getCargo(): String
+  + {abstract} generarReporte(): String
+}
+
+class Recepcionista {
+  - reservas: ArrayList<Reserva>
+  + Recepcionista(nombre, id, cargo)
+  + hacerReserva(fecha: String, huesped: Huesped): void
+  + hacerReserva(fecha: String, servicio: String, huesped: Huesped): void
+  + generarReporte(): String
+  + getReservas(): ArrayList<Reserva>
+}
+
+class Camarero {
+  - zona: String
+  + Camarero(nombre, id, cargo, zona)
+  + generarReporte(): String
+}
+
+abstract class Huesped {
+  - nombre: String
+  - documento: String
+  - edad: int
+  + Huesped(nombre, documento, edad)
+  + getNombre(): String
+  + getDocumento(): String
+  + getEdad(): int
+  + {abstract} obtenerInfo(): String
+}
+
+class HuespedRegular {
+  - noches: int
+  + HuespedRegular(nombre, documento, edad, noches)
+  + obtenerInfo(): String
+}
+
+class HuespedVIP {
+  - noches: int
+  - descuento: int
+  + HuespedVIP(nombre, documento, edad, noches, descuento)
+  + obtenerInfo(): String
+  + getDescuento(): int
+}
+
+class Reserva {
+  - fecha: String
+  - servicio: String
+  - huesped: Huesped
+  - recepcionista: Recepcionista
+  + Reserva(fecha, servicio, huesped, recepcionista)
+  + getHuesped(): Huesped
+  + getRecepcionista(): Recepcionista
+  + getFecha(): String
+  + getInfo(): String
+}
+
+class Habitacion {
+  - numero: String
+  - capacidad: int
+  - huespedes: ArrayList<Huesped>
+  + Habitacion(numero, capacidad)
+  + alojarHuesped(h: Huesped): void
+  + liberarHuesped(documento: String): void
+  + buscarHuesped(documento: String): Huesped
+  + listarHuespedes(): void
+  + getNumero(): String
+  + getCapacidad(): int
+  + getHuespedes(): ArrayList<Huesped>
+}
+
+class Hotel {
+  - nombre: String
+  - habitaciones: ArrayList<Habitacion>
+  - empleados: ArrayList<Empleado>
+  + Hotel(nombre)
+  + agregarHabitacion(numero: String, capacidad: int): void
+  + alojarHuesped(numero: String, huesped: Huesped): void
+  + agregarEmpleado(e: Empleado): void
+  + buscarHabitacion(numero: String): Habitacion
+  + buscarHuesped(documento: String): Huesped
+  + buscarRecepcionista(id: String): Recepcionista
+  + listarRecepcionistas(): void
+  + generarReporteGeneral(): void
+  + getHabitaciones(): ArrayList<Habitacion>
+  + getEmpleados(): ArrayList<Empleado>
+}
+
+class Validador {
+  - Validador()
+  + {static} validarNombre(nombre: String): void
+  + {static} validarDocumento(documento: String): void
+  + {static} validarNoches(noches: int): int
+  + {static} texto(valor: String, campo: String): String
+}
+Empleado ..> Validador
+Huesped ..> Validador
+Hotel o-- Empleado
+Empleado <|-- Recepcionista
+Empleado <|-- Camarero
+Huesped <|-- HuespedRegular
+Huesped <|-- HuespedVIP
+Hotel *-- Habitacion
+Habitacion o-- Huesped
+Recepcionista --> Reserva
+Reserva --> Huesped
+Reserva --> Recepcionista
+
+note bottom of HuespedVIP : <<final>>
+note bottom of Hotel : Composicion con Habitacion
+note right of Habitacion : Agregacion con Huesped
+
+@enduml
